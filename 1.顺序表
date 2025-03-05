@@ -1,0 +1,154 @@
+#include<iostream>
+using namespace std;
+
+struct SequentialList
+{
+    int *elements;
+    int size;   // 数据个数
+    int capacity;  //容量
+};
+
+void initializeList(SequentialList *list,int capacity)//初始化顺序表
+{
+    list->elements=new int [capacity]();
+    list->size=0;
+    list->capacity=capacity;
+}
+
+void destroyList(SequentialList *list,int capacity)//销毁顺序表
+{
+    delete []list->elements;
+}
+
+int size(SequentialList *list)//获取顺序表大小
+{
+    return list->size;
+}
+
+bool isEmpty(SequentialList *list)//判断顺序表是否为空
+{
+    return list->size==0;
+}
+
+
+//插入元素！！！
+void insert(SequentialList *list, int index, int element)
+{
+  //  1.先判断插入位置是否合法：
+    if(index<0||index>list->size)
+    {
+        throw std::invalid_argument("Invalid index");
+    }
+    
+    //2.如果顺序表已满 则扩容到原来的两倍 并将原数组元素复制到新数组中
+    
+    if(list->capacity==list->size)
+    {
+        int newCapacity=list->capacity*2;//扩容
+        int * newElements=new int [newCapacity];//创建新数组
+        for(int i=0 ; i<newCapacity ; i++)//将原数组元素复制到新数组中
+        {
+            newElements[i]=list->elements[i];
+        }
+        delete []list->elements;
+        list->elements=newElements;
+        list->capacity=newCapacity;
+        
+        //3.将插入位置后的元素一次后移一位 然后将新元素插入到指定位置
+        for(int i = list->size ; i>index ; i++)
+        {
+            list->elements[i] =list->elements[i-1];
+        }
+        list->elements[index]=element;
+        list->size++;
+    }
+}
+
+//删除元素
+void deleteElement(SequentialList *list, int index)
+{
+    //判断索引位置是否合法：
+    
+    if(index<0||index>=list->size)
+    {
+        throw std::invalid_argument("Invalid index");
+    }
+    //删除操作：
+    for(int i=index ; i<list->size-1 ; i++)
+    {
+        list->elements[i]=list->elements[i+1];
+    }
+    list->size--;
+}
+
+//查找元素：
+
+int findElement(SequentialList *list,int element)
+{
+    for(int i =0 ; i< list->size ; i++)
+    {
+        if(list->elements[i]==element)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+//获取元素：
+
+int getElement(SequentialList* list, int index)
+{
+    if(index<0||index>=list->size)
+    {
+        throw std::invalid_argument("Invalid index");
+    }
+    return list->elements[index];
+}
+
+//更改元素
+void updateElement(SequentialList*list,int index, int value)
+{
+    if(index<0||index>=list->size)
+    {
+        throw std::invalid_argument("Invalid index");
+    }
+    list->elements[index]=value;
+}
+
+int main() {
+    SequentialList myList;
+    initializeList(&myList, 10);
+
+    for (int i = 0; i < 10; i++)
+    {
+        insert(&myList, i, i * 10);
+    }
+
+    cout << "Size: " << size(&myList) << endl;
+    cout << "Is empty: " << isEmpty(&myList) << endl;
+
+    for (int i = 0; i < size(&myList); i++)
+    {
+        cout << getElement(&myList, i) << " ";
+    }
+    cout << endl;
+
+    deleteElement(&myList, 5);
+    updateElement(&myList, 1, 1314);
+
+    int idx = findElement(&myList, 20);
+    updateElement(&myList, idx, 520);
+
+    cout << "Size: " << size(&myList) << endl;
+    cout << "Is empty: " << isEmpty(&myList) << endl;
+
+    for (int i = 0; i < size(&myList); i++)
+    {
+        cout << getElement(&myList, i) << " ";
+    }
+    cout << endl;
+
+    
+    return 0;
+}
